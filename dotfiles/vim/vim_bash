@@ -1,0 +1,8 @@
+#!/bin/sh
+# add alias to run chrome
+
+shopt -s expand_aliases
+
+alias chrome="'/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe'"
+
+
