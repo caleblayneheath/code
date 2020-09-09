@@ -1,4 +1,11 @@
-  " points to specific file vim_bash to find aliases
+packloadall
+
+" set univeral tab to 2 spaces
+set tabstop=2
+set shiftwidth=2
+set expandtab
+
+" points to specific file vim_bash to find aliases
 let $BASH_ENV="~/.vim/vim_bash"
 
 " maps Ctrl + p to use chrome alias to open current file
@@ -19,4 +26,38 @@ if &term =~ '^xterm'
   " 6 -> solid vertical bar
 endif
 
+" allow for vim to use WSL windows keyboard
+" helper function to return selected text as string
+func! GetSelectedText()
+  normal gv"xy
+  let result = getreg("x")
+  return result
+endfunc
 
+"use system function to call clip.exe and pipe GetSelectedText
+if !has("clipboard") && executable("clip.exe") 
+  noremap <C-C> :call system('clip.exe', GetSelectedText())<CR>
+endif
+
+" installation of vim-plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" run :PlugInstall to install, :PlugStatus to check
+" make sure to use single quotes
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-sensible'
+
+Plug 'preservim/nerdtree'
+
+" post install (yarn install | npm install) then load plugin only for editing
+" supported files
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json','graphql', 'markdown', 'vue', 'yaml', 'html'] }
+
+call plug#end()
